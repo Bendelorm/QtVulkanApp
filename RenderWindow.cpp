@@ -10,9 +10,22 @@
 static float vertexData[] = {
     // Y up, front = CCW
     // X,     Y,     Z,     R,    G,    B
-    0.0f,   0.5f,  0.0f,   1.0f, 0.0f, 0.0f,    //top vertex - red
-    -0.5f,  -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,    //bottom left vertex - green
-    0.5f,  -0.5f,  0.0f,   0.0f, 0.0f, 1.0f     //bottom right vertex - blue
+    1.0f,  0.0f,  -1.0f,   1.0f, 0.0f, 0.0f,    //1
+    0.0f,  0.0f, 0.50f,   0.0f, 0.0f, 1.0f,    //2
+    -1.0f,  0.0f,  -1.0f,  1.0f, 0.0f, 1.0f,   //3
+
+    0.0f,  0.0f, 0.50f,   0.0f, 0.0f, 1.0f,    //2
+    -1.0f,  0.0f,  -1.0f,  1.0f, 0.0f, 1.0f,   //3
+        0.0f, 1.0f, 0.0f,  1.0f, 1.0f, 1.0f,    //TOP
+
+    1.0f,  0.0f,  -1.0f,   1.0f, 0.0f, 0.0f,    //1
+    0.0f,  0.0f, 0.50f,   0.0f, 0.0f, 1.0f,    //2
+     0.0f, 1.0f, 0.0f,  1.0f, 1.0f, 1.0f,   //TOP
+
+     -1.0f,  0.0f,  -1.0f,  1.0f, 0.0f, 1.0f,   //3
+    1.0f,  0.0f,  -1.0f,   1.0f, 0.0f, 0.0f,    //1
+    0.0f, 1.0f, 0.0f,  1.0f, 1.0f, 1.0f,        //TOP
+
 };
 
 //Utility variable and function for alignment:
@@ -121,7 +134,7 @@ void RenderWindow::initResources()
     //The size of each vertex to be passed to the shader
     VkVertexInputBindingDescription vertexBindingDesc = {
         0, // binding - has to match that in VkVertexInputAttributeDescription and startNextFrame()s m_devFuncs->vkCmdBindVertexBuffers
-        6 * sizeof(float), // stride account for X, Y, Z, R, G, B
+    	6 * sizeof(float), // stride account for X, Y, Z, R, G, B
         VK_VERTEX_INPUT_RATE_VERTEX
     };
 
@@ -348,7 +361,7 @@ void RenderWindow::initSwapChainResources()
     mProj.perspective(25.0f,          sz.width() / (float) sz.height(), 0.01f, 100.0f);
     //Camera is -4 away from origo
     /**PLAY WITH THIS**/
-    mProj.translate(0, 0, -4);
+    mProj.translate(0, 0, -10);
 
     //Flip projection because of Vulkan's -Y axis
     mProj.scale(1.0f, -1.0f, 1.0);
@@ -394,14 +407,14 @@ void RenderWindow::startNextFrame()
     //Rotates the object
     //                  speed,   X, Y, Z axis
     /**PLAY WITH THIS**/
-    tempMatrix.rotate(mRotation, 0, 1, 0);
+    tempMatrix.rotate(mRotation, 1, 1, 1);
 
     memcpy(GPUmemPointer, tempMatrix.constData(), 16 * sizeof(float));
     mDeviceFunctions->vkUnmapMemory(dev, mBufMem);
 
     //rotate the triangle 1 degree per frame
     /**PLAY WITH THIS**/
-    mRotation += 1.0f;
+    mRotation += 0.1f;
 
     mDeviceFunctions->vkCmdBindPipeline(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline);
     mDeviceFunctions->vkCmdBindDescriptorSets(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout, 0, 1,
@@ -428,7 +441,7 @@ void RenderWindow::startNextFrame()
 
     /********************************* Our draw call!: *********************************/
     // the number 3 is the number of vertices, so you have to change that if you add more!
-    mDeviceFunctions->vkCmdDraw(cb, 3, 1, 0, 0);
+    mDeviceFunctions->vkCmdDraw(cb, 12, 1, 0, 0);
 
     mDeviceFunctions->vkCmdEndRenderPass(cmdBuf);
 

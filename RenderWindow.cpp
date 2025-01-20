@@ -10,22 +10,37 @@
 static float vertexData[] = {
     // Y up, front = CCW
     // X,     Y,     Z,     R,    G,    B
-    1.0f,  0.0f,  -1.0f,   1.0f, 0.0f, 0.0f,    //1
-    0.0f,  0.0f, 0.50f,   0.0f, 0.0f, 1.0f,    //2
-    -1.0f,  0.0f,  -1.0f,  1.0f, 0.0f, 1.0f,   //3
+    1.0f, 0.0f, 0.0f, 0.0f, 0.4f, 0.0f, //1
+    0.0f, 1.0f, 0.0f, 0.0f, 0.4f, 0.0f, //2
+    0.0f, 0.0f, 2.0f, 0.0f, 1.0f, 0.0f, //3
 
-    0.0f,  0.0f, 0.50f,   0.0f, 0.0f, 1.0f,    //2
-    -1.0f,  0.0f,  -1.0f,  1.0f, 0.0f, 1.0f,   //3
-        0.0f, 1.0f, 0.0f,  1.0f, 1.0f, 1.0f,    //TOP
+    1.0f, 0.0f, 0.0f, 0.0f, 0.4f, 0.0f, //1
+    0.0f, -1.0f, 0.0f, 0.0f, 0.4f, 0.0f, //4
+    0.0f, 0.0f, 2.0f, 0.0f, 1.0f, 0.0f, //3
 
-    1.0f,  0.0f,  -1.0f,   1.0f, 0.0f, 0.0f,    //1
-    0.0f,  0.0f, 0.50f,   0.0f, 0.0f, 1.0f,    //2
-     0.0f, 1.0f, 0.0f,  1.0f, 1.0f, 1.0f,   //TOP
+    0.0f, -1.0f, 0.0f, 0.0f, 0.4f, 0.0f, //4
+    -1.0f, 0.0f, 0.0f, 0.0f, 0.4f, 0.0f, //5
+    0.0f, 0.0f, 2.0f, 0.0f, 1.0f, 0.0f, //3
 
-     -1.0f,  0.0f,  -1.0f,  1.0f, 0.0f, 1.0f,   //3
-    1.0f,  0.0f,  -1.0f,   1.0f, 0.0f, 0.0f,    //1
-    0.0f, 1.0f, 0.0f,  1.0f, 1.0f, 1.0f,        //TOP
+    -1.0f, 0.0f, 0.0f, 0.0f, 0.4f, 0.0f, //5
+    0.0f, 1.0f, 0.0f, 0.0f, 0.4f, 0.0f, //2
+    0.0f, 0.0f, 2.0f, 0.0f, 1.0f, 0.0f, //3
 
+    1.0f, 0.0f, 0.0f, 0.0f, 0.4f, 0.0f, //1
+    0.0f, 1.0f, 0.0f, 0.0f, 0.4f, 0.0f, //2
+    0.0f, 0.0f, -2.0f, 0.0f, 1.0f, 0.0f, //3
+
+    1.0f, 0.0f, 0.0f, 0.0f, 0.4f, 0.0f, //1
+    0.0f, -1.0f, 0.0f, 0.0f, 0.4f, 0.0f, //4
+    0.0f, 0.0f, -2.0f, 0.0f, 1.0f, 0.0f, //3
+
+    0.0f, -1.0f, 0.0f, 0.0f, 0.4f, 0.0f, //4
+    -1.0f, 0.0f, 0.0f, 0.0f, 0.4f, 0.0f, //5
+    0.0f, 0.0f, -2.0f, 0.0f, 1.0f, 0.0f, //3
+
+    -1.0f, 0.0f, 0.0f, 0.0f, 0.4f, 0.0f, //5
+    0.0f, 1.0f, 0.0f, 0.0f, 0.4f, 0.0f, //2
+    0.0f, 0.0f, -2.0f, 0.0f, 1.0f, 0.0f, //3
 };
 
 //Utility variable and function for alignment:
@@ -407,14 +422,14 @@ void RenderWindow::startNextFrame()
     //Rotates the object
     //                  speed,   X, Y, Z axis
     /**PLAY WITH THIS**/
-    tempMatrix.rotate(mRotation, 1, 1, 1);
+    tempMatrix.rotate(mRotation, -0.5, 1, -1);
 
     memcpy(GPUmemPointer, tempMatrix.constData(), 16 * sizeof(float));
     mDeviceFunctions->vkUnmapMemory(dev, mBufMem);
 
     //rotate the triangle 1 degree per frame
     /**PLAY WITH THIS**/
-    mRotation += 0.1f;
+    mRotation += 1.0f;
 
     mDeviceFunctions->vkCmdBindPipeline(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline);
     mDeviceFunctions->vkCmdBindDescriptorSets(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout, 0, 1,
@@ -441,7 +456,7 @@ void RenderWindow::startNextFrame()
 
     /********************************* Our draw call!: *********************************/
     // the number 3 is the number of vertices, so you have to change that if you add more!
-    mDeviceFunctions->vkCmdDraw(cb, 12, 1, 0, 0);
+    mDeviceFunctions->vkCmdDraw(cb, 24, 1, 0, 0);
 
     mDeviceFunctions->vkCmdEndRenderPass(cmdBuf);
 

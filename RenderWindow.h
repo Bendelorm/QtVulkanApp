@@ -2,7 +2,6 @@
 #define RENDERWINDOW_H
 
 #include <QVulkanWindow>
-
 class RenderWindow : public QVulkanWindowRenderer
 {
 public:

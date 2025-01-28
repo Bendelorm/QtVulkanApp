@@ -31,8 +31,6 @@ public:
     //Get Vulkan info - just for fun
     void getVulkanHWInfo();
 
-    void setModelMatrix(QMatrix4x4 modelMatrix);
-
 protected:
 
     //Creates the Vulkan shader module from the precompiled shader files in .spv format
@@ -67,10 +65,10 @@ private:
 
 
     void createBuffer(VkDevice logicalDevice,
-                      const VkDeviceSize uniAlign,
-                      VisualObject* visualObject,
+                      const VkDeviceSize uniAlign, VisualObject* visualObject,
                       VkBufferUsageFlags usage=VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
-
+    void setModelMatrix(QMatrix4x4 modelMatrix);
 };
+
 
 #endif // RENDERWINDOW_H

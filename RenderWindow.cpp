@@ -18,20 +18,13 @@ static inline VkDeviceSize aligned(VkDeviceSize v, VkDeviceSize byteAlign)
 /*** RenderWindow class ***/
 
 RenderWindow::RenderWindow(QVulkanWindow *w, bool msaa)
-    :  mWindow(w)
+    : mWindow(w)
 {
-    if (msaa) {
-        const QList<int> counts = w->supportedSampleCounts();
-        qDebug() << "Supported sample counts:" << counts;
-        for (int s = 16; s >= 4; s /= 2) {
-            if (counts.contains(s)) {
-                qDebug("Requesting sample count %d", s);
-                mWindow->setSampleCount(s);
-                break;
-            }
-        }
-    }
+    //
+    mObjects.push_back(new VkTriangle());
+    mObjects.push_back((new VkTriangleSurface()));
 }
+
 void RenderWindow::createBuffer(VkDevice logicalDevice,
                                 const VkDeviceSize uniAlign,
                                 VisualObject* visualObject,
@@ -94,7 +87,6 @@ void RenderWindow::setModelMatrix(QMatrix4x4 modelMatrix)
     mDeviceFunctions->vkCmdPushConstants(mWindow->currentCommandBuffer(), mPipelineLayout,
                                          VK_SHADER_STAGE_VERTEX_BIT, 0, 16 * sizeof(float), modelMatrix.constData());
 }
-
 
 void RenderWindow::initResources()
 {
@@ -334,7 +326,7 @@ void RenderWindow::initResources()
     VkPipelineInputAssemblyStateCreateInfo ia;
     memset(&ia, 0, sizeof(ia));
     ia.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-    ia.topology = VK_PRIMITIVE_TOPOLOGY_LINE_STRIP;
+    ia.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
     pipelineInfo.pInputAssemblyState = &ia;
 
     // The viewport and scissor will be set dynamically via vkCmdSetViewport/Scissor.
@@ -423,7 +415,7 @@ void RenderWindow::initSwapChainResources()
     mProjectionMatrix.perspective(25.0f, sz.width() / (float) sz.height(), 0.01f, 100.0f);
     //Camera is -4 away from origo
     /**PLAY WITH THIS**/
-    mProjectionMatrix.translate(0, 0, -5);
+    mProjectionMatrix.translate(0, 0, -10);
 
     //Flip projection because of Vulkan's -Y axis
     mProjectionMatrix.scale(1.0f, -1.0f, 1.0);
@@ -467,7 +459,7 @@ void RenderWindow::startNextFrame()
     //We make a temp of this to now mess up the original matrix
     QMatrix4x4 tempMatrix = mProjectionMatrix;
     //Rotates the object
-    //                  speed,   X, Y, Z axis
+    //speed, X, Y, Z axis
     /**PLAY WITH THIS**/
     tempMatrix.rotate(mRotation, 0, 1, 0);
 
@@ -476,7 +468,7 @@ void RenderWindow::startNextFrame()
 
     //rotate the triangle 1 degree per frame
     /**PLAY WITH THIS**/
-    mRotation += 0.0f;
+    mRotation += 1.0f;
 
     mDeviceFunctions->vkCmdBindPipeline(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline);
     mDeviceFunctions->vkCmdBindDescriptorSets(cb, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout, 0, 1,
@@ -502,21 +494,16 @@ void RenderWindow::startNextFrame()
     mDeviceFunctions->vkCmdSetScissor(cb, 0, 1, &scissor);
 
     /********************************* Our draw call!: *********************************/
-    // the number 3 is the number of vertices, so you have to change that if you add more!
-    //mDeviceFunctions->vkCmdDraw(cb, 6, 1, 0, 0);
-    mDeviceFunctions->vkCmdDraw(cmdBuf, mTriangle.getVertices().size(), 1, 0, 0);
 
-
+    //Push the model matrix to the shader and draw the triangle
+    for (auto it=mObjects.begin(); it!=mObjects.end(); it++)
+    {
+        mDeviceFunctions->vkCmdBindVertexBuffers(cmdBuf, 0, 1, &(*it)->mBuffer, &vbOffset);
+        setModelMatrix(mProjectionMatrix*(*it)->mMatrix);
+        mDeviceFunctions->vkCmdDraw(cmdBuf, (*it)->mVertices.size(), 1, 0, 0);
+    }
     mDeviceFunctions->vkCmdEndRenderPass(cmdBuf);
 
-    /*QVulkanWindow subclasses queue their draw calls in their reimplementation of
-    QVulkanWindowRenderer::startNextFrame(). Once done, they are required to call back
-    QVulkanWindow::frameReady(). The example has no asynchronous command generation, so the
-    frameReady() call is made directly from startNextFrame().
-    To get continuous updates, the example simply invokes QWindow::requestUpdate() in order to schedule a repaint.
-    This means that it requests the Qt window system to call the update() method,
-    which will eventually lead to the paintEvent() being called.
-    */
     mWindow->frameReady();
     mWindow->requestUpdate(); // render continuously, throttled by the presentation rate
 }

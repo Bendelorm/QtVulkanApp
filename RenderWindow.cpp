@@ -461,7 +461,7 @@ void RenderWindow::startNextFrame()
     //Rotates the object
     //speed, X, Y, Z axis
     /**PLAY WITH THIS**/
-    tempMatrix.rotate(mRotation, 0, 1, 0);
+    tempMatrix.rotate(mRotation, 1, 1, 0);
 
     memcpy(GPUmemPointer, tempMatrix.constData(), 16 * sizeof(float));
     mDeviceFunctions->vkUnmapMemory(dev, mBufMem);

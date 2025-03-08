@@ -286,7 +286,7 @@ QVector3D Renderer::getVectorBetween(const VisualObject& objA, const VisualObjec
     return objB.Position - objA.Position;  // Vector from A to B
 }
 
-void Renderer::getDistanceBetween(const VisualObject& objA, const VisualObject& objB)
+void Renderer::checkOverlap( VisualObject& objA, VisualObject& objB)
 {
     if (getVectorBetween(objA, objB).length() < objA.Radius + objB.Radius) // Distance
     {
@@ -295,11 +295,13 @@ void Renderer::getDistanceBetween(const VisualObject& objA, const VisualObject& 
         if (objB.getName() == "pickup")
         {
             qDebug() << "POGGERS PICKUP";
+            objB.move(0.0f, -2.0f, 0.0f);
         }
         //enemy
         if (objB.getName() == "enemy")
         {
             qDebug() << "POGGERS enemy";
+            objA.move(0.0f, -2.0f, 0.0f);
         }
         //house
 
@@ -319,7 +321,7 @@ void Renderer::startNextFrame()
         {
             continue;
         }
-    getDistanceBetween(*mObjects.at(8), *mObjects.at(i));
+    checkOverlap(*mObjects.at(8), *mObjects.at(i));
     }
 
     VkCommandBuffer cmdBuf = mWindow->currentCommandBuffer();

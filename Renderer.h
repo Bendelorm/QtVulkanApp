@@ -40,7 +40,7 @@ public:
     void getVulkanHWInfo();
 
     QVector3D getVectorBetween(const VisualObject& objA, const VisualObject& objB);
-    void getDistanceBetween(const VisualObject& objA, const VisualObject& objB);
+    void checkOverlap(VisualObject& objA, VisualObject& objB);
 
     std::vector<VisualObject*>& getObjects() { return mObjects; }
     std::unordered_map<std::string, VisualObject*>& getMap() { return mMap; }

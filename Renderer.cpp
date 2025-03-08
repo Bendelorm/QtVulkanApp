@@ -27,13 +27,36 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
         }
     }
     // Dag 230125
-    mObjects.push_back(new Triangle());
+    //mObjects.push_back(new Triangle());
     mObjects.push_back((new TriangleSurface()));
     mObjects.push_back((new WorldAxis()));
+    mObjects.push_back((new Pickup()));
+    mObjects.push_back((new Pickup()));
+    mObjects.push_back((new Pickup()));
+    mObjects.push_back((new Pickup()));
+    mObjects.push_back((new Pickup()));
+    mObjects.push_back((new Pickup()));
+    mObjects.push_back((new Player()));
+
     // Dag 030225
-    mObjects.at(0)->setName("tri");
-    mObjects.at(1)->setName("quad");
-    mObjects.at(2)->setName("axis");
+    //mObjects.at(0)->setName("tri");
+    mObjects.at(0)->setName("quad");
+    mObjects.at(1)->setName("axis");
+    mObjects.at(2)->setName("pickup");
+    mObjects.at(3)->setName("pickup2");
+    mObjects.at(4)->setName("pickup3");
+    mObjects.at(5)->setName("pickup4");
+    mObjects.at(6)->setName("pickup5");
+    mObjects.at(7)->setName("pickup6");
+    mObjects.at(8)->setName("player");
+    //setting position of pickups
+    mObjects.at(2)->move(10, 0, 0);
+    mObjects.at(3)->move(10, 0, 10);
+    mObjects.at(4)->move(-17, 0, 14);
+    mObjects.at(5)->move(12, 0, -8);
+    mObjects.at(6)->move(-10, 0, -15);
+    mObjects.at(7)->move(-2, 0, 11);
+
 
     // **************************************
     // Legger inn objekter i map
@@ -43,7 +66,8 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
         mMap.insert(std::pair<std::string, VisualObject*>{(*it)->getName(),*it});
 
 	//Inital position of the camera
-    mCamera.setPosition(QVector3D(-1, -1, -4));
+    mCamera.setPosition(QVector3D(0, -20, -30));
+    mCamera.pitch(42);
 
     //OEF: need access to our VulkanWindow so making a convenience pointer
     mVulkanWindow = dynamic_cast<VulkanWindow*>(w);
@@ -254,12 +278,26 @@ void Renderer::initSwapChainResources()
     mCamera.perspective(45.0f, sz.width() / (float) sz.height(), 0.01f, 100.0f);
 }
 
+QVector3D Renderer::getVectorBetween(const VisualObject& objA, const VisualObject& objB)
+{
+    return objB.Position - objA.Position;  // Vector from A to B
+}
+
+void Renderer::getDistanceBetween(const VisualObject& objA, const VisualObject& objB)
+{
+    if (getVectorBetween(objA, objB).length() < objA.Radius + objB.Radius)
+    {
+        qDebug() << "OVERLAPPING";
+    }
+        // Distance (Euclidean norm)
+}
 void Renderer::startNextFrame()
 {
     //OEF: Handeling input from keyboard and mouse is done in VulkanWindow
     //Has to be done each frame to get smooth movement
     mVulkanWindow->handleInput();
     mCamera.update();
+    getDistanceBetween(*mObjects.at(8), *mObjects.at(7));
 
     VkCommandBuffer cmdBuf = mWindow->currentCommandBuffer();
     const QSize sz = mWindow->swapChainImageSize();
@@ -325,7 +363,7 @@ void Renderer::startNextFrame()
     }
     */
     mDeviceFunctions->vkCmdEndRenderPass(cmdBuf);
-    mObjects.at(1)->rotate(1.0f, 0.0f, 0.0f, 1.0f);
+   // mObjects.at(1)->rotate(1.0f, 0.0f, 0.0f, 1.0f);
     //qDebug() << mObjects.at(1)->mMatrix;
     mWindow->frameReady();
     mWindow->requestUpdate(); // render continuously, throttled by the presentation rate

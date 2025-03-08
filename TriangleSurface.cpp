@@ -3,23 +3,23 @@
 #include <QDebug>
 TriangleSurface::TriangleSurface() : VisualObject()
 {
-    Vertex v1{0.0f,   0.0f,  0.0f,   1.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-    Vertex v2{1.0f,   0.0f,  0.0f,   0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
-    Vertex v3{0.0f,   1.0f,  0.0f,   0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
-    Vertex v4{1.0f,   1.0f,  0.0f,   1.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+    Vertex v1{-20.0f,   0.0f,  20.0f,   0.0f, 0.3f, 0.0f, 0.0f, 0.0f};
+    Vertex v2{20.0f,   0.0f,  -20.0f,   0.0f, 0.3f, 0.0f, 0.0f, 0.0f};
+    Vertex v3{20.0f,   0.0f,  20.0f,   0.0f, 0.3f, 0.0f, 0.0f, 0.0f};
+    Vertex v4{-20.0f,   0.0f,  -20.0f,   0.0f, 0.3f, 0.0f, 0.0f, 0.0f};
 
     //Pushing 1st triangle,
     mVertices.push_back(v1);
     mVertices.push_back(v2);
     mVertices.push_back(v3);
     //then the 2nd.
-    mVertices.push_back(v3);
+    mVertices.push_back(v1);
     mVertices.push_back(v2);
     mVertices.push_back(v4);
 
     //Temporary scale and positioning
-    mMatrix.scale(0.5f);
-    mMatrix.translate(0.5f, 0.1f, 0.1f);
+    //mMatrix.scale(0.0f);
+    mMatrix.translate(0.0f, 0.0f, 0.0f);
 }
 
 TriangleSurface::TriangleSurface(const std::string &filename)

@@ -7,6 +7,8 @@
 #include "Camera.h"
 #include "Triangle.h"
 #include "TriangleSurface.h"
+#include "pickup.h"
+#include "Player.h"
 #include "VisualObject.h"
 
 class Renderer : public QVulkanWindowRenderer
@@ -35,6 +37,10 @@ public:
 
     //Get Vulkan info - just for fun
     void getVulkanHWInfo();
+
+    QVector3D getVectorBetween(const VisualObject& objA, const VisualObject& objB);
+    void getDistanceBetween(const VisualObject& objA, const VisualObject& objB);
+    void destroyObject(VisualObject* obj);
 
     std::vector<VisualObject*>& getObjects() { return mObjects; }
     std::unordered_map<std::string, VisualObject*>& getMap() { return mMap; }
@@ -71,6 +77,8 @@ private:
     friend class VulkanWindow;
     Triangle mTriangle;
     TriangleSurface mSurface;
+    Pickup mPickup;
+    Player mPlayer;
     VisualObject mVisualObject;
     std::vector<VisualObject*> mObjects;
     std::unordered_map<std::string, VisualObject*> mMap;    // alternativ container

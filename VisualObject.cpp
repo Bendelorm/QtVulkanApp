@@ -19,6 +19,9 @@ VisualObject::VisualObject()
 void VisualObject::move(float x, float y, float z)
 {
     mMatrix.translate(x, y, z);
+    Position.setX(mMatrix(0, 3));
+    Position.setZ(mMatrix(2, 3));
+    qDebug() << "Stored Position: (" << Position.x() << ", " << "0" << ", " << Position.z() << ")";
 }
 
 void VisualObject::scale(float s)

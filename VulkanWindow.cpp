@@ -217,19 +217,24 @@ void VulkanWindow::handleInput()
 {
     //Camera
     mCamera->setSpeed(0.f);  //cancel last frame movement
-    if (mInput.RMB)
+    if (mInput.W)
     {
-        if (mInput.W)
-            mCamera->setSpeed(mCameraSpeed);
-        if (mInput.S)
-            mCamera->setSpeed(-mCameraSpeed);
-        if (mInput.D)
-            mCamera->moveRight(-mCameraSpeed);
-        if (mInput.A)
-            mCamera->moveRight(mCameraSpeed);
-        if (mInput.Q)
-            mCamera->updateHeigth(mCameraSpeed);
-        if (mInput.E)
-            mCamera->updateHeigth(-mCameraSpeed);
+        //mCamera->setSpeed(mCameraSpeed);
+        dynamic_cast<Renderer*>(mRenderer)->mObjects.at(8)->move(0.0f, 0.0f, -0.1f);
+    }
+    if (mInput.S)
+    {
+        //mCamera->setSpeed(-mCameraSpeed);
+        dynamic_cast<Renderer*>(mRenderer)->mObjects.at(8)->move(0.0f, 0.0f, 0.1f);
+    }
+    if (mInput.D)
+    {
+        //mCamera->moveRight(-mCameraSpeed);
+        dynamic_cast<Renderer*>(mRenderer)->mObjects.at(8)->move(0.1f, 0.0f, 0.0f);
+    }
+    if (mInput.A)
+    {
+        //mCamera->moveRight(mCameraSpeed);
+        dynamic_cast<Renderer*>(mRenderer)->mObjects.at(8)->move(-0.1f, 0.0f, 0.0f);
     }
 }

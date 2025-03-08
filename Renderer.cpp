@@ -37,18 +37,20 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     mObjects.push_back((new Pickup()));
     mObjects.push_back((new Pickup()));
     mObjects.push_back((new Player()));
+    mObjects.push_back((new Enemy()));
 
     // Dag 030225
     //mObjects.at(0)->setName("tri");
     mObjects.at(0)->setName("quad");
     mObjects.at(1)->setName("axis");
     mObjects.at(2)->setName("pickup");
-    mObjects.at(3)->setName("pickup2");
-    mObjects.at(4)->setName("pickup3");
-    mObjects.at(5)->setName("pickup4");
-    mObjects.at(6)->setName("pickup5");
-    mObjects.at(7)->setName("pickup6");
+    mObjects.at(3)->setName("pickup");
+    mObjects.at(4)->setName("pickup");
+    mObjects.at(5)->setName("pickup");
+    mObjects.at(6)->setName("pickup");
+    mObjects.at(7)->setName("pickup");
     mObjects.at(8)->setName("player");
+    mObjects.at(9)->setName("enemy");
     //setting position of pickups
     mObjects.at(2)->move(10, 0, 0);
     mObjects.at(3)->move(10, 0, 10);
@@ -56,6 +58,7 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     mObjects.at(5)->move(12, 0, -8);
     mObjects.at(6)->move(-10, 0, -15);
     mObjects.at(7)->move(-2, 0, 11);
+    mObjects.at(9)->move(-5, 0, 7);
 
 
     // **************************************
@@ -285,11 +288,23 @@ QVector3D Renderer::getVectorBetween(const VisualObject& objA, const VisualObjec
 
 void Renderer::getDistanceBetween(const VisualObject& objA, const VisualObject& objB)
 {
-    if (getVectorBetween(objA, objB).length() < objA.Radius + objB.Radius)
+    if (getVectorBetween(objA, objB).length() < objA.Radius + objB.Radius) // Distance
     {
         qDebug() << "OVERLAPPING";
+        //pickup
+        if (objB.getName() == "pickup")
+        {
+            qDebug() << "POGGERS PICKUP";
+        }
+        //enemy
+        if (objB.getName() == "enemy")
+        {
+            qDebug() << "POGGERS enemy";
+        }
+        //house
+
+        //door
     }
-        // Distance (Euclidean norm)
 }
 void Renderer::startNextFrame()
 {
@@ -297,7 +312,15 @@ void Renderer::startNextFrame()
     //Has to be done each frame to get smooth movement
     mVulkanWindow->handleInput();
     mCamera.update();
-    getDistanceBetween(*mObjects.at(8), *mObjects.at(7));
+    for (size_t i = 0; i < mObjects.size(); ++i)
+    {
+        //skipping objects
+        if(i == 0 || i == 1 || i == 8)
+        {
+            continue;
+        }
+    getDistanceBetween(*mObjects.at(8), *mObjects.at(i));
+    }
 
     VkCommandBuffer cmdBuf = mWindow->currentCommandBuffer();
     const QSize sz = mWindow->swapChainImageSize();

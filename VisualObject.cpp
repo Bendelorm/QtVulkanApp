@@ -14,6 +14,7 @@ VisualObject::VisualObject()
     //mVertices.push_back(v2);
     //mVertices.push_back(v4);
     mMatrix.setToIdentity();
+
 }
 
 void VisualObject::move(float x, float y, float z)

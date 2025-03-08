@@ -9,6 +9,7 @@
 #include "TriangleSurface.h"
 #include "pickup.h"
 #include "Player.h"
+#include "enemy.h"
 #include "VisualObject.h"
 
 class Renderer : public QVulkanWindowRenderer
@@ -40,7 +41,6 @@ public:
 
     QVector3D getVectorBetween(const VisualObject& objA, const VisualObject& objB);
     void getDistanceBetween(const VisualObject& objA, const VisualObject& objB);
-    void destroyObject(VisualObject* obj);
 
     std::vector<VisualObject*>& getObjects() { return mObjects; }
     std::unordered_map<std::string, VisualObject*>& getMap() { return mMap; }
@@ -79,6 +79,7 @@ private:
     TriangleSurface mSurface;
     Pickup mPickup;
     Player mPlayer;
+    Enemy mEnemy;
     VisualObject mVisualObject;
     std::vector<VisualObject*> mObjects;
     std::unordered_map<std::string, VisualObject*> mMap;    // alternativ container

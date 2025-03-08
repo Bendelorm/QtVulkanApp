@@ -8,6 +8,7 @@
 class VisualObject
 {
 public:
+    virtual ~VisualObject() {};
     std::vector<Vertex> mVertices;
     inline std::vector<Vertex> getVertices() { return mVertices; }
     VisualObject();

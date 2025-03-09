@@ -81,6 +81,8 @@ private:
     Player mPlayer;
     Enemy mEnemy;
     VisualObject mVisualObject;
+    int Score {0};
+    int MaxScore {6};
     std::vector<VisualObject*> mObjects;
     std::unordered_map<std::string, VisualObject*> mMap;    // alternativ container
 

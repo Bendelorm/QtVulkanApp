@@ -216,25 +216,28 @@ void VulkanWindow::mouseMoveEvent(QMouseEvent *event)
 void VulkanWindow::handleInput()
 {
     //Camera
-    mCamera->setSpeed(0.f);  //cancel last frame movement
-    if (mInput.W)
+    if (bCanMove)
     {
-        //mCamera->setSpeed(mCameraSpeed);
-        dynamic_cast<Renderer*>(mRenderer)->mObjects.at(8)->move(0.0f, 0.0f, -0.1f);
-    }
-    if (mInput.S)
-    {
-        //mCamera->setSpeed(-mCameraSpeed);
-        dynamic_cast<Renderer*>(mRenderer)->mObjects.at(8)->move(0.0f, 0.0f, 0.1f);
-    }
-    if (mInput.D)
-    {
-        //mCamera->moveRight(-mCameraSpeed);
-        dynamic_cast<Renderer*>(mRenderer)->mObjects.at(8)->move(0.1f, 0.0f, 0.0f);
-    }
-    if (mInput.A)
-    {
-        //mCamera->moveRight(mCameraSpeed);
-        dynamic_cast<Renderer*>(mRenderer)->mObjects.at(8)->move(-0.1f, 0.0f, 0.0f);
+        mCamera->setSpeed(0.f);  //cancel last frame movement
+        if (mInput.W)
+        {
+            //mCamera->setSpeed(mCameraSpeed);
+            dynamic_cast<Renderer*>(mRenderer)->mObjects.at(8)->move(0.0f, 0.0f, -0.1f);
+        }
+        if (mInput.S)
+        {
+            //mCamera->setSpeed(-mCameraSpeed);
+            dynamic_cast<Renderer*>(mRenderer)->mObjects.at(8)->move(0.0f, 0.0f, 0.1f);
+        }
+        if (mInput.D)
+        {
+            //mCamera->moveRight(-mCameraSpeed);
+            dynamic_cast<Renderer*>(mRenderer)->mObjects.at(8)->move(0.1f, 0.0f, 0.0f);
+        }
+        if (mInput.A)
+        {
+            //mCamera->moveRight(mCameraSpeed);
+            dynamic_cast<Renderer*>(mRenderer)->mObjects.at(8)->move(-0.1f, 0.0f, 0.0f);
+        }
     }
 }

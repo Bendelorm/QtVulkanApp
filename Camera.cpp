@@ -33,14 +33,20 @@ void Camera::yaw(float degrees)
 {
 	mYaw += degrees;
 }
-
+void Camera::followPlayer(const QVector3D &playerPosition, const QVector3D &offset)
+{
+    mEye = playerPosition + offset;
+    mAt = playerPosition;
+    mViewMatrix.setToIdentity();
+    mViewMatrix.lookAt(mEye, mAt, mUp);
+}
 void Camera::update()
 {
 	mViewMatrix.setToIdentity();
-	mPosition.setZ(mPosition.z() + mSpeed);
+    mPosition.setZ(mPosition.z() + mSpeed);
     //mViewMatrix.translate(mPosition);               //Makes rotation work around World Origo
     mViewMatrix.rotate(mYaw, 0.f, 1.f, 0.f);
-	mViewMatrix.rotate(mPitch, 1.f, 0.f, 0.f);    
+    mViewMatrix.rotate(mPitch, 1.f, 0.f, 0.f);
     //mViewMatrix.rotate(mYaw, 0.f, 1.f, 0.f);      //pitch then yaw makes camera wonkey
     mViewMatrix.translate(mPosition);             //Makes rotation work around Camera Origo
 }

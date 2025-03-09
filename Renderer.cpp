@@ -38,6 +38,8 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     mObjects.push_back((new Pickup()));
     mObjects.push_back((new Player()));
     mObjects.push_back((new Enemy()));
+    mObjects.push_back((new Enemy()));
+
 
     // Dag 030225
     //mObjects.at(0)->setName("tri");
@@ -51,6 +53,8 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     mObjects.at(7)->setName("pickup");
     mObjects.at(8)->setName("player");
     mObjects.at(9)->setName("enemy");
+    mObjects.at(10)->setName("enemy");
+
     //setting position of pickups
     mObjects.at(2)->move(10, 0, 0);
     mObjects.at(3)->move(10, 0, 10);
@@ -59,6 +63,8 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     mObjects.at(6)->move(-10, 0, -15);
     mObjects.at(7)->move(-2, 0, 11);
     mObjects.at(9)->move(-5, 0, 7);
+    mObjects.at(10)->move(5, 0, -19);
+
 
 
     // **************************************
@@ -290,18 +296,25 @@ void Renderer::checkOverlap( VisualObject& objA, VisualObject& objB)
 {
     if (getVectorBetween(objA, objB).length() < objA.Radius + objB.Radius) // Distance
     {
-        qDebug() << "OVERLAPPING";
+        //qDebug() << "OVERLAPPING";
         //pickup
         if (objB.getName() == "pickup")
         {
-            qDebug() << "POGGERS PICKUP";
             objB.move(0.0f, -2.0f, 0.0f);
+            Score = Score + 1;
+            qDebug() << "You have collected" << Score << "/" << MaxScore << "Pickups";
+            if (Score == MaxScore)
+            {
+                qDebug() << "You won!";
+                mVulkanWindow->bCanMove = false;
+            }
         }
         //enemy
         if (objB.getName() == "enemy")
         {
-            qDebug() << "POGGERS enemy";
             objA.move(0.0f, -2.0f, 0.0f);
+            qDebug() << "You lost!";
+            mVulkanWindow->bCanMove = false;
         }
         //house
 
@@ -313,7 +326,8 @@ void Renderer::startNextFrame()
     //OEF: Handeling input from keyboard and mouse is done in VulkanWindow
     //Has to be done each frame to get smooth movement
     mVulkanWindow->handleInput();
-    mCamera.update();
+    //mCamera.update();
+    mCamera.followPlayer(mObjects.at(8)->Position, mCamera.cameraOffset);
     for (size_t i = 0; i < mObjects.size(); ++i)
     {
         //skipping objects

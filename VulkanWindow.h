@@ -23,7 +23,7 @@ public:
     void setSelectedObject(VisualObject* object) { mSelectedObject = object; }
 
     void handleInput();
-
+    bool bCanMove {true};
 signals:
     void frameQueued(int colorValue);
 

@@ -21,13 +21,16 @@ public:
     QMatrix4x4 cMatrix();
 
     void update();
+    void followPlayer(const QVector3D &playerPosition, const QVector3D &offset);
 	void setPosition(const QVector3D& position);
     void pitch(float degrees);
     void yaw(float degrees);
+    QVector3D cameraOffset{0.0f, 10.0f, 10.0f};
+
 
 private:
-    QVector3D mEye{0.0, 0.0, 0.0};  // Camera position
-    QVector3D mAt{0.0, 0.0, -1.0};   // Forward vector
+    QVector3D mEye{0.0, 10.0, 5.0};  // Camera position
+    QVector3D mAt{0.0, 0.0, 0.0};   // Forward vector
     QVector3D mUp{0.0, 1.0, 0.0};   // Up vector
 
     QMatrix4x4 mProjectionMatrix{};

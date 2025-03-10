@@ -25,7 +25,7 @@ public:
 	void setPosition(const QVector3D& position);
     void pitch(float degrees);
     void yaw(float degrees);
-    QVector3D cameraOffset{0.0f, 10.0f, 10.0f};
+    QVector3D cameraOffset{0.0f, 20.0f, 10.0f};
 
 
 private:

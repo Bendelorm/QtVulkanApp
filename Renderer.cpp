@@ -28,17 +28,29 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     }
     // Dag 230125
     //mObjects.push_back(new Triangle());
-    mObjects.push_back((new TriangleSurface()));
-    mObjects.push_back((new WorldAxis()));
-    mObjects.push_back((new Pickup()));
-    mObjects.push_back((new Pickup()));
-    mObjects.push_back((new Pickup()));
-    mObjects.push_back((new Pickup()));
-    mObjects.push_back((new Pickup()));
-    mObjects.push_back((new Pickup()));
-    mObjects.push_back((new Player()));
-    mObjects.push_back((new Enemy()));
-    mObjects.push_back((new Enemy()));
+    mObjects.push_back((new TriangleSurface())); //0
+    mObjects.push_back((new WorldAxis())); //1
+    mObjects.push_back((new Pickup())); //2
+    mObjects.push_back((new Pickup())); //3
+    mObjects.push_back((new Pickup())); //4
+    mObjects.push_back((new Pickup())); //5
+    mObjects.push_back((new Pickup())); //6
+    mObjects.push_back((new Pickup())); //7
+    mObjects.push_back((new Player())); //8
+    mObjects.push_back((new Enemy()));  //9
+    mObjects.push_back((new Enemy())); //10
+    mObjects.push_back((new House())); //11
+    mObjects.push_back((new Door())); //12
+    mObjects.push_back((new DoorCollision())); //13
+    mObjects.push_back((new TriangleSurface())); //14
+    mObjects.push_back((new House())); //15
+    mObjects.push_back((new Door())); //16
+    mObjects.push_back((new Pickup())); //17
+
+
+
+
+
 
 
     // Dag 030225
@@ -54,6 +66,19 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     mObjects.at(8)->setName("player");
     mObjects.at(9)->setName("enemy");
     mObjects.at(10)->setName("enemy");
+    mObjects.at(11)->setName("house");
+    mObjects.at(12)->setName("door");
+    mObjects.at(13)->setName("doorcollision");
+    mObjects.at(14)->setName("otherquad");
+    mObjects.at(15)->setName("otherhouse");
+    mObjects.at(16)->setName("insidedoor");
+    mObjects.at(17)->setName("pickup");
+
+
+
+
+
+
 
     //setting position of pickups
     mObjects.at(2)->move(10, 0, 0);
@@ -62,8 +87,24 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     mObjects.at(5)->move(12, 0, -8);
     mObjects.at(6)->move(-10, 0, -15);
     mObjects.at(7)->move(-2, 0, 11);
-    mObjects.at(9)->move(-5, 0, 7);
-    mObjects.at(10)->move(5, 0, -19);
+    mObjects.at(9)->move(-5, 0, 10);
+    mObjects.at(10)->move(5, 0, -5);
+    mObjects.at(11)->move(16, 0, 16);
+    mObjects.at(12)->move(11.9, 0, 14);
+    mObjects.at(13)->move(12, 0, 14);
+    mObjects.at(14)->move(116, 0, 16);
+    mObjects.at(15)->move(116, -0.1, 16);
+    mObjects.at(16)->move(96.1, 0, 4.5);
+    mObjects.at(17)->move(116, 0, 16);
+
+
+
+
+
+    mObjects.at(11)->Radius = 4;
+    mObjects.at(12)->Radius = 3;
+    mObjects.at(15)->Radius = 0;
+    mObjects.at(15)->scale(5);
 
 
 
@@ -75,8 +116,8 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
         mMap.insert(std::pair<std::string, VisualObject*>{(*it)->getName(),*it});
 
 	//Inital position of the camera
-    mCamera.setPosition(QVector3D(0, -20, -30));
-    mCamera.pitch(42);
+    //mCamera.setPosition(QVector3D(0, -20, -30));
+    //mCamera.pitch(42);
 
     //OEF: need access to our VulkanWindow so making a convenience pointer
     mVulkanWindow = dynamic_cast<VulkanWindow*>(w);
@@ -292,7 +333,7 @@ QVector3D Renderer::getVectorBetween(const VisualObject& objA, const VisualObjec
     return objB.Position - objA.Position;  // Vector from A to B
 }
 
-void Renderer::checkOverlap( VisualObject& objA, VisualObject& objB)
+void Renderer::checkOverlap(VisualObject& objA, VisualObject& objB)
 {
     if (getVectorBetween(objA, objB).length() < objA.Radius + objB.Radius) // Distance
     {
@@ -303,8 +344,14 @@ void Renderer::checkOverlap( VisualObject& objA, VisualObject& objB)
             objB.move(0.0f, -2.0f, 0.0f);
             Score = Score + 1;
             qDebug() << "You have collected" << Score << "/" << MaxScore << "Pickups";
+            if (Score == MaxScore - 1)
+            {
+                qDebug() << "You can now enter the building through the door";
+                bCanEnter = true;
+            }
             if (Score == MaxScore)
             {
+
                 qDebug() << "You won!";
                 mVulkanWindow->bCanMove = false;
             }
@@ -317,8 +364,38 @@ void Renderer::checkOverlap( VisualObject& objA, VisualObject& objB)
             mVulkanWindow->bCanMove = false;
         }
         //house
-
+        if (objB.getName() == "house")
+        {
+            qDebug() << "Collision with house";
+            objA.move(-1, 0, 0);
+        }
         //door
+        if (objB.getName() == "door")
+        {
+            if (bCanEnter)
+            {
+                qDebug() << "ROTATING";
+                objB.rotate(0.1, 0, 1, 0);
+            }
+            else
+            {
+                qDebug() << " NOT ROTATING";
+            }
+        }
+        //doorcollision
+        if (objB.getName() == "doorcollision")
+        {
+            if (bCanEnter)
+            {
+                qDebug() << "Entering";
+                objA.move(90, 0, -10);
+                //mCamera.cameraOffset = {0.0f, 5.0f, 5.0f};
+            }
+            else
+            {
+                qDebug() << "Can't enter yet";
+            }
+        }
     }
 }
 void Renderer::startNextFrame()
@@ -331,11 +408,19 @@ void Renderer::startNextFrame()
     for (size_t i = 0; i < mObjects.size(); ++i)
     {
         //skipping objects
-        if(i == 0 || i == 1 || i == 8)
+        if(i == 0 || i == 1 || i == 8 || i == 14 || i == 15)
         {
             continue;
         }
     checkOverlap(*mObjects.at(8), *mObjects.at(i));
+    }
+    float deltaTime = 0.016f;
+    for (auto& obj : mObjects)
+    {
+        if (obj->getName() == "enemy")
+        {
+            static_cast<Enemy*>(obj)->update(deltaTime);
+        }
     }
 
     VkCommandBuffer cmdBuf = mWindow->currentCommandBuffer();

@@ -2,14 +2,14 @@
 
 Pickup::Pickup()
 {
-    Vertex v1{0.0f,   0.0f,  0.0f,  0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
-    Vertex v2{0.0f,   1.0f,  0.0f,   0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
-    Vertex v3{1.0f,   0.0f,  0.0f,   0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
-    Vertex v4{1.0f,   1.0f,  0.0f,   0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
-    Vertex v5{0.0f,   0.0f,  1.0f,   0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
-    Vertex v6{0.0f,   1.0f,  1.0f,   0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
-    Vertex v7{1.0f,   0.0f,  1.0f,   0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
-    Vertex v8{1.0f,   1.0f,  1.0f,   0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+    Vertex v1{-0.5f,   0.0f,  -0.5f,  0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+    Vertex v2{-0.5f,   1.0f,  -0.5f,   0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+    Vertex v3{0.5f,   0.0f,  -0.5f,   0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+    Vertex v4{0.5f,   1.0f,  -0.5f,   0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+    Vertex v5{-0.5f,   0.0f,  0.5f,   0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+    Vertex v6{-0.5f,   1.0f,  0.5f,   0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+    Vertex v7{0.5f,   0.0f,  0.5f,   0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+    Vertex v8{0.5f,   1.0f,  0.5f,   0.0f, 1.0f, 0.0f, 0.0f, 0.0f};
 
 
     //Pushing triangles to create box

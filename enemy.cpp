@@ -67,3 +67,19 @@ mVertices.push_back(v3);
 mVertices.push_back(v5);
 mVertices.push_back(v7);
 }
+
+void Enemy::update(float deltaTime)
+{
+    // Move enemy
+    move(Speed * Direction * deltaTime, 0.0f, 0.0f);
+
+    // Reverse direction if reaching boundary
+    if (Position.x() >= RightLimit)
+    {
+        Direction = -1;  // Move left
+    }
+    else if (Position.x() <= LeftLimit)
+    {
+        Direction = 1;   // Move right
+    }
+}

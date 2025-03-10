@@ -10,6 +10,9 @@
 #include "pickup.h"
 #include "Player.h"
 #include "enemy.h"
+#include "house.h"
+#include "door.h"
+#include "doorcollision.h"
 #include "VisualObject.h"
 
 class Renderer : public QVulkanWindowRenderer
@@ -80,9 +83,13 @@ private:
     Pickup mPickup;
     Player mPlayer;
     Enemy mEnemy;
+    House mHouse;
+    Door mDoor;
+    DoorCollision mDoorCollision;
     VisualObject mVisualObject;
+    bool bCanEnter {false};
     int Score {0};
-    int MaxScore {6};
+    int MaxScore {7};
     std::vector<VisualObject*> mObjects;
     std::unordered_map<std::string, VisualObject*> mMap;    // alternativ container
 

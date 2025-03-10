@@ -21,6 +21,9 @@ qt_add_executable(QtVulkanApp
     pickup.h pickup.cpp
     Player.h Player.cpp
     enemy.h enemy.cpp
+    house.h house.cpp
+    door.h door.cpp
+    doorcollision.h doorcollision.cpp
 )
 # Define the shader files
 set(SHADER_FILES

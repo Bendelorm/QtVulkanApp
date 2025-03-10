@@ -1,15 +1,15 @@
-#include "Player.h"
+#include "house.h"
 
-Player::Player() : VisualObject()
+House::House()
 {
-    Vertex v1{-0.5f,   0.0f,  -0.5f,  0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
-    Vertex v2{-0.5f,   1.0f,  -0.5f,   0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
-    Vertex v3{0.5f,   0.0f,  -0.5f,   0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
-    Vertex v4{0.5f,   1.0f,  -0.5f,   0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
-    Vertex v5{-0.5f,   0.0f,  0.5f,   0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
-    Vertex v6{-0.5f,   1.0f,  0.5f,   0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
-    Vertex v7{0.5f,   0.0f,  0.5f,   0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
-    Vertex v8{0.5f,   1.0f,  0.5f,   0.0f, 0.0f, 1.0f, 0.0f, 0.0f};
+    Vertex v1{-4.0f,   0.0f,  -4.0f,  1.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+    Vertex v2{-4.0f,   10.0f,  -4.0f,   1.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+    Vertex v3{4.0f,   0.0f,  -4.0f,   1.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+    Vertex v4{4.0f,   10.0f,  -4.0f,   1.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+    Vertex v5{-4.0f,   0.0f,  4.0f,   1.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+    Vertex v6{-4.0f,   10.0f,  4.0f,   1.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+    Vertex v7{4.0f,   0.0f,  4.0f,   1.0f, 1.0f, 0.0f, 0.0f, 0.0f};
+    Vertex v8{4.0f,   10.0f,  4.0f,   1.0f, 1.0f, 0.0f, 0.0f, 0.0f};
 
 
     //Pushing triangles to create box
@@ -66,4 +66,5 @@ Player::Player() : VisualObject()
     mVertices.push_back(v3);
     mVertices.push_back(v5);
     mVertices.push_back(v7);
+
 }

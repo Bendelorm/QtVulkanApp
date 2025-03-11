@@ -414,7 +414,6 @@ void Renderer::startNextFrame()
         }
     checkOverlap(*mObjects.at(8), *mObjects.at(i));
     }
-    float deltaTime = 0.016f;
     for (auto& obj : mObjects)
     {
         if (obj->getName() == "enemy")

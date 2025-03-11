@@ -90,6 +90,7 @@ private:
     bool bCanEnter {false};
     int Score {0};
     int MaxScore {7};
+    float deltaTime = 0.016f;
     std::vector<VisualObject*> mObjects;
     std::unordered_map<std::string, VisualObject*> mMap;    // alternativ container
 

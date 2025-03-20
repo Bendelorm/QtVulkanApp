@@ -24,7 +24,7 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     mObjects.push_back(new Triangle());
     mObjects.push_back((new TriangleSurface()));
     mObjects.push_back((new WorldAxis()));
-    mObjects.push_back((new ObjMesh("suzanne.obj")));
+    mObjects.push_back((new ObjMesh("catgod.obj")));
 
     mObjects.at(0)->setName("tri");
     mObjects.at(1)->setName("quad");

@@ -28,7 +28,7 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     mObjects.push_back(new Triangle());
     mObjects.push_back((new TriangleSurface()));
     mObjects.push_back((new WorldAxis()));
-    mObjects.push_back((new ObjMesh("suzanne.obj")));
+    mObjects.push_back((new ObjMesh("player.obj")));
     // Dag 030225
     mObjects.at(0)->setName("tri");
     mObjects.at(1)->setName("quad");
@@ -289,7 +289,7 @@ void Renderer::initResources()
     // Create the texture sampler
     createTextureSampler();
 
-    mTextureHandle = createTexture("../../Assets/hundA.bmp"); //Heightmap.jpg HundA.bmp
+    mTextureHandle = createTexture("../../Assets/blyat.jpg"); //Heightmap.jpg HundA.bmp
 
 
 

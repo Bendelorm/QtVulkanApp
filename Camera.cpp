@@ -1,6 +1,9 @@
 #include "Camera.h"
 
-Camera::Camera() {}
+Camera::Camera() 
+{
+	init();
+}
 
 void Camera::init()
 {
@@ -11,8 +14,11 @@ void Camera::perspective(int degrees, double aspect, double nearplane, double fa
 {
     mProjectionMatrix.setToIdentity();
     mProjectionMatrix.perspective(degrees, aspect, nearplane, farplane);
+
     //Flip projection because of Vulkan's -Y axis
-    mProjectionMatrix.scale(1.0f, -1.0f, 1.0f);
+	// Now done with Qts clipCorrectionMatrix() which is more correct than this hack.
+	// It is corrected in Renderer::setViewProjectionMatrix(), just before it is pushed to the shader.
+    // mProjectionMatrix.scale(1.0f, -1.0f, 1.0f);
 }
 
 void Camera::lookAt(const QVector3D &eye, const QVector3D &at, const QVector3D &up)
@@ -36,13 +42,14 @@ void Camera::yaw(float degrees)
 
 void Camera::update()
 {
-	mViewMatrix.setToIdentity();
+	//Set ViewMatrix to Identity, then add the new position and rotations
+    mViewMatrix.setToIdentity();
 	mPosition.setZ(mPosition.z() + mSpeed);
-    mViewMatrix.translate(mPosition);               //Makes rotation work around World Origo
+    //mViewMatrix.translate(mPosition);               //Makes rotation work around World Origo
     mViewMatrix.rotate(mYaw, 0.f, 1.f, 0.f);
-	mViewMatrix.rotate(mPitch, 1.f, 0.f, 0.f);    
+    mViewMatrix.rotate(mPitch, 1.f, 0.f, 0.f);
     //mViewMatrix.rotate(mYaw, 0.f, 1.f, 0.f);      //pitch then yaw makes camera wonkey
-	//mViewMatrix.translate(mPosition);             //Makes rotation work around Camera Origo
+    mViewMatrix.translate(mPosition);             //Makes rotation work around Camera Origo
 }
 
 void Camera::setPosition(const QVector3D& position)
@@ -77,7 +84,7 @@ void Camera::rotate(float t, float x, float y, float z)
     mViewMatrix.rotate(t,x,y,z);
 }
 
-QMatrix4x4 Camera::cMatrix()
-{
-    return mProjectionMatrix * mViewMatrix;
-}
+//QMatrix4x4 Camera::cMatrix()
+//{
+//    return mProjectionMatrix * mViewMatrix;
+//}

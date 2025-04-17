@@ -18,12 +18,18 @@ public:
     void setSpeed(float speed);
     void moveRight(float delta);
     void updateHeigth(float deltaHeigth);
-    QMatrix4x4 cMatrix();
+    //QMatrix4x4 cMatrix();
+
+	inline QMatrix4x4 viewMatrix() const { return mViewMatrix; }
+	inline QMatrix4x4 projectionMatrix() const { return mProjectionMatrix; }
 
     void update();
 	void setPosition(const QVector3D& position);
     void pitch(float degrees);
     void yaw(float degrees);
+
+    inline void setViewMatrix(const QMatrix4x4 &newViewMatrix){ mViewMatrix = newViewMatrix; }
+    inline void setProjectionMatrix(const QMatrix4x4 &newProjectionMatrix){ mProjectionMatrix = newProjectionMatrix; }
 
 private:
     QVector3D mEye{0.0, 0.0, 0.0};  // Camera position

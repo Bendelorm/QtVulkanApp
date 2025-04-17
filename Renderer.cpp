@@ -2,6 +2,7 @@
 #include <QVulkanFunctions>
 #include <QFile>
 #include <fstream>
+#include "ObjMesh.h"
 #include "VulkanWindow.h"
 #include "WorldAxis.h"
 #include "Triangle.h"
@@ -27,11 +28,12 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     mObjects.push_back(new Triangle());
     mObjects.push_back((new TriangleSurface()));
     mObjects.push_back((new WorldAxis()));
+    mObjects.push_back((new ObjMesh("suzanne.obj")));
     // Dag 030225
     mObjects.at(0)->setName("tri");
     mObjects.at(1)->setName("quad");
     mObjects.at(2)->setName("axis");
-
+    mObjects.at(3)->setName("suzanne");
     // **************************************
     // Legger inn objekter i map
     // **************************************
@@ -259,6 +261,15 @@ void Renderer::initResources()
     if (result != VK_SUCCESS)
         qFatal("Failed to create graphics pipeline: %d", result);
 
+    mPipeline2 = mPipeline1;                                    //reusing most of the settings from the first pipeline
+    inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;   // or VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+    rasterization.polygonMode = VK_POLYGON_MODE_FILL;           // VK_POLYGON_MODE_LINE will make a wireframe; VK_POLYGON_MODE_FILL
+    rasterization.lineWidth = 5.0f;
+    pipelineInfo.pInputAssemblyState = &inputAssembly;
+    result = mDeviceFunctions->vkCreateGraphicsPipelines(logicalDevice, mPipelineCache, 1, &pipelineInfo, nullptr, &mPipeline2);
+    if (result != VK_SUCCESS)
+        qFatal("Failed to create graphics pipeline: %d", result);
+
 
 	// Destroying the shader modules, we won't need them anymore after the pipeline is created
     if (vertShaderModule)
@@ -278,7 +289,9 @@ void Renderer::initResources()
     // Create the texture sampler
     createTextureSampler();
 
-    mTextureHandle = createTexture("../../Assets/Heightmap.jpg"); //Heightmap.jpg HundA.bmp
+    mTextureHandle = createTexture("../../Assets/hundA.bmp"); //Heightmap.jpg HundA.bmp
+
+
 
     // getVulkanHWInfo(); // if you want to get info about the Vulkan hardware
 }
@@ -323,11 +336,12 @@ void Renderer::startNextFrame()
     for (std::vector<VisualObject*>::iterator it=mObjects.begin(); it!=mObjects.end(); it++)
     {
         //Draw type
-		if ((*it)->getDrawType() == 0)
+        if ((*it)->getName() == "suzanne")
 			mDeviceFunctions->vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline1);
-		else
-			mDeviceFunctions->vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mColorMaterial.pipeline);
-
+        else if ((*it)->getDrawType() == 0)
+            mDeviceFunctions->vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline2);
+        else
+            mDeviceFunctions->vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mColorMaterial.pipeline);
         QMatrix4x4 mvp = mCamera.projectionMatrix() * mCamera.viewMatrix() * (*it)->getMatrix();
         setModelMatrix((*it)->getMatrix()); //mvp);
         
@@ -816,6 +830,11 @@ void Renderer::releaseResources()
     if (mPipeline1) {
         mDeviceFunctions->vkDestroyPipeline(dev, mPipeline1, nullptr);
         mPipeline1 = VK_NULL_HANDLE;
+    }
+
+    if (mPipeline2) {
+        mDeviceFunctions->vkDestroyPipeline(dev, mPipeline2, nullptr);
+        mPipeline2 = VK_NULL_HANDLE;
     }
 
     if (mColorMaterial.pipeline) {

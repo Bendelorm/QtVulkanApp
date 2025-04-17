@@ -130,7 +130,9 @@ private:
         VkShaderModule fragShaderModule;
 		//VkPipelineLayout pipelineLayout{ VK_NULL_HANDLE };    //also should have had a spesific pipeline layout
         VkPipeline pipeline{ VK_NULL_HANDLE };
+
     } mColorMaterial;
+    // Color shader material / shader
 };
 
 #endif // RENDERER_H

@@ -14,6 +14,8 @@ public:
     void move(float x, float y = 0.0f, float z = 0.0f);
     void scale(float s);
     void rotate(float t, float x, float y, float z);
+    float Radius {0.5};
+    QVector3D Position;
 
 	//Setters and Getters
     inline std::vector<Vertex> getVertices() { return mVertices; }
@@ -31,6 +33,7 @@ public:
     inline QMatrix4x4 getMatrix() const {return mMatrix;}
 	inline std::vector<Vertex> getVertices() const { return mVertices; }
 	inline std::vector<uint32_t> getIndices() const { return mIndices; }
+
 
 protected:
     std::vector<Vertex> mVertices;

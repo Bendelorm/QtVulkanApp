@@ -22,8 +22,9 @@ public:
     QVulkanWindowRenderer* getRenderWindow() const { return mRenderer; }
     void setSelectedObject(VisualObject* object) { mSelectedObject = object; }
 
-    void handleInput();
 
+    void handleInput(float deltaTime);
+    bool bCanMove {true};
 signals:
     void frameQueued(int colorValue);
 
@@ -44,10 +45,11 @@ protected:
 private:
     void setCameraSpeed(float value);
     Input mInput;
-    float mCameraSpeed{0.005f};
+    float mCameraSpeed{0.1f};
     float mCameraRotateSpeed{ -0.1f };
     int mMouseXlast{0}; //for mouse rotate input
     int mMouseYlast{0};
+    float moveSpeed = 20.0f; // meters per second
 
     class Camera* mCamera{ nullptr };
 };

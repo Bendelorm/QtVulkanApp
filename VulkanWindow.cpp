@@ -12,7 +12,7 @@ QVulkanWindowRenderer* VulkanWindow::createRenderer()
     mRenderer = new Renderer(this, true); // last true == try MSAA
 
     //Camera is made when the renderer is made, so we know it is valid now
-//We set values on the camera a lot from this class, so it is convenient to have a pointer to it
+    //We set values on the camera a lot from this class, so it is convenient to have a pointer to it
     mCamera = &dynamic_cast<Renderer*>(mRenderer)->mCamera;
 
     return mRenderer;
@@ -213,23 +213,31 @@ void VulkanWindow::mouseMoveEvent(QMouseEvent *event)
     mMouseYlast = event->pos().y();
 }
 
-void VulkanWindow::handleInput()
+void VulkanWindow::handleInput(float deltaTime)
 {
     //Camera
-    mCamera->setSpeed(0.f);  //cancel last frame movement
-    if (mInput.RMB)
+    if (bCanMove)
     {
+        mCamera->setSpeed(0.f);  //cancel last frame movement
         if (mInput.W)
-            mCamera->setSpeed(mCameraSpeed);
+        {
+            //mCamera->setSpeed(mCameraSpeed);
+            dynamic_cast<Renderer*>(mRenderer)->mObjects.at(3)->move(0.0f, 0.0f, -moveSpeed * deltaTime);
+        }
         if (mInput.S)
-            mCamera->setSpeed(-mCameraSpeed);
+        {
+            //mCamera->setSpeed(-mCameraSpeed);
+            dynamic_cast<Renderer*>(mRenderer)->mObjects.at(3)->move(0.0f, 0.0f, moveSpeed * deltaTime);
+        }
         if (mInput.D)
-            mCamera->moveRight(-mCameraSpeed);
+        {
+            //mCamera->moveRight(-mCameraSpeed);
+            dynamic_cast<Renderer*>(mRenderer)->mObjects.at(3)->move(moveSpeed * deltaTime, 0.0f, 0.0f);
+        }
         if (mInput.A)
-            mCamera->moveRight(mCameraSpeed);
-        if (mInput.Q)
-            mCamera->updateHeigth(mCameraSpeed);
-        if (mInput.E)
-            mCamera->updateHeigth(-mCameraSpeed);
+        {
+            //mCamera->moveRight(mCameraSpeed);
+            dynamic_cast<Renderer*>(mRenderer)->mObjects.at(3)->move(-moveSpeed * deltaTime, 0.0f, 0.0f);
+        }
     }
 }

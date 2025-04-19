@@ -2,6 +2,7 @@
 #include <QVulkanFunctions>
 #include <QFile>
 #include <fstream>
+#include "HeightMap.h"
 #include "ObjMesh.h"
 #include "VulkanWindow.h"
 #include "WorldAxis.h"
@@ -29,11 +30,14 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     mObjects.push_back((new TriangleSurface()));
     mObjects.push_back((new WorldAxis()));
     mObjects.push_back((new ObjMesh("player.obj")));
+    mObjects.push_back(new HeightMap("../../Assets/paint.jpg"));
     // Dag 030225
     mObjects.at(0)->setName("tri");
     mObjects.at(1)->setName("quad");
     mObjects.at(2)->setName("axis");
-    mObjects.at(3)->setName("suzanne");
+    mObjects.at(3)->setName("player");
+    mObjects.at(4)->setName("heightmap");
+    mObjects.at(4)->move(0, -100, 0);
     // **************************************
     // Legger inn objekter i map
     // **************************************
@@ -42,7 +46,8 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     //     mMap.insert(std::pair<std::string, VisualObject*>{(*it)->getName(),*it});
 
 	//Inital position of the camera
-    mCamera.setPosition(QVector3D(-0.5, -0.5, -8));
+    //mCamera.setPosition(QVector3D(-0.5, -0.5, -8));
+    mObjects.at(3)->move(-1, 0, 0);
 
     //Need access to our VulkanWindow so making a convenience pointer
     mVulkanWindow = dynamic_cast<VulkanWindow*>(w);
@@ -289,7 +294,7 @@ void Renderer::initResources()
     // Create the texture sampler
     createTextureSampler();
 
-    mTextureHandle = createTexture("../../Assets/blyat.jpg"); //Heightmap.jpg HundA.bmp
+    mTextureHandle = createTexture("../../Assets/hundA.bmp"); //Heightmap.jpg HundA.bmp
 
 
 
@@ -318,8 +323,13 @@ void Renderer::startNextFrame()
 {
     //Handeling input from keyboard and mouse is done in VulkanWindow
     //Has to be done each frame to get smooth movement
-    mVulkanWindow->handleInput();
-    mCamera.update();               //input can have moved the camera
+    static auto lastTime = std::chrono::high_resolution_clock::now();
+    auto now = std::chrono::high_resolution_clock::now();
+    float deltaTime = std::chrono::duration<float>(now - lastTime).count();
+    lastTime = now;
+    mVulkanWindow->handleInput(deltaTime);
+    mCamera.followPlayer(mObjects.at(3)->Position, mCamera.cameraOffset);
+
 
     VkCommandBuffer commandBuffer = mWindow->currentCommandBuffer();
 
@@ -336,7 +346,7 @@ void Renderer::startNextFrame()
     for (std::vector<VisualObject*>::iterator it=mObjects.begin(); it!=mObjects.end(); it++)
     {
         //Draw type
-        if ((*it)->getName() == "suzanne")
+        if ((*it)->getName() == "player"|| (*it)->getName() == "heightmap")
 			mDeviceFunctions->vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline1);
         else if ((*it)->getDrawType() == 0)
             mDeviceFunctions->vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipeline2);
@@ -344,7 +354,7 @@ void Renderer::startNextFrame()
             mDeviceFunctions->vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mColorMaterial.pipeline);
         QMatrix4x4 mvp = mCamera.projectionMatrix() * mCamera.viewMatrix() * (*it)->getMatrix();
         setModelMatrix((*it)->getMatrix()); //mvp);
-        
+
         // Bind the texture descriptor set
 		setTexture(mTextureHandle, commandBuffer);
         

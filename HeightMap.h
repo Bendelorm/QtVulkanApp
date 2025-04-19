@@ -6,7 +6,7 @@
 class HeightMap : public VisualObject
 {
 public:
-    HeightMap();
+    HeightMap(const std::string& filename);
 
     void makeTerrain(unsigned char* textureData, int width, int height);
 };

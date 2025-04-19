@@ -1,8 +1,26 @@
 #include "HeightMap.h"
 #include "Vertex.h"
+#include "stb_image.h"
 
-HeightMap::HeightMap()
-{ }
+HeightMap::HeightMap(const std::string& filename)
+{
+    int width = 256;
+    int height = 256;
+    int channels = 4;
+
+    unsigned char* textureData = stbi_load(filename.c_str(), &width, &height, &channels, 4);
+
+    if (!textureData)
+    {
+        throw std::runtime_error("Failed to load heightmap image: " + filename);
+    }
+
+    // Now pass the data to the terrain creation function
+    makeTerrain(textureData, width, height);
+
+    // Free image memory when done
+    stbi_image_free(textureData);
+}
 
 //Function that makes a terrain grid from a heightmap, using the values in the heightmap as height.
 //This function will crash if the width and height of the heightmap is not set correct!
@@ -10,6 +28,7 @@ HeightMap::HeightMap()
 // The function is not tested in this codebase, and is provided as an example.
 void HeightMap::makeTerrain(unsigned char* textureData, int widthIn, int heightIn)
 {
+
     //Default normal pointing straight up - should be calculated correctly for lights to work!!!
     float normal[3]{0.f, 1.f, 0.f};
 
@@ -48,9 +67,34 @@ void HeightMap::makeTerrain(unsigned char* textureData, int widthIn, int heightI
             // Calculate the correct index for the R value of each pixel
             int index = (w + d * width) * 4; // Each pixel has 4 bytes (RGBA)
             float heightFromBitmap = static_cast<float>(textureData[index]);         // * heightSpacing + heightPlacement;
+            float normalizedHeight = heightFromBitmap / 255.f;
+            float r, g, b;
+            if (normalizedHeight < 0.4f)
+            {
+                // Low elevations: green
+                r = 0.1f;
+                g = 0.6f + normalizedHeight * 0.4f; // gets lighter green
+                b = 0.1f;
+            }
+            else if (normalizedHeight < 0.8f)
+            {
+                // Mid elevations: brown
+                float t = (normalizedHeight - 0.4f) / 0.4f;
+                r = 0.5f + t * 0.3f;
+                g = 0.3f + t * 0.2f;
+                b = 0.1f;
+            }
+            else
+            {
+                // High elevations: snow (white)
+                float t = (normalizedHeight - 0.8f) / 0.2f;
+                r = 0.8f + t * 0.2f;
+                g = 0.8f + t * 0.2f;
+                b = 0.8f + t * 0.2f;
+            }
 			//                                          x - value                      y-value               z-value
             mVertices.emplace_back(Vertex{vertexXStart + (w * horisontalSpacing), heightFromBitmap, vertexZStart - (d * horisontalSpacing),
-				//  dummy normal=0,1,0                  Texture coordinates
+                //  dummy normal=0,1,0                  Texture coordinates
                 normal[0],normal[1],normal[2],           w / (width - 1.f), d / (depth - 1.f)});
         }
     }

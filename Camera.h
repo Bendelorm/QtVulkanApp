@@ -20,13 +20,15 @@ public:
     void updateHeigth(float deltaHeigth);
     //QMatrix4x4 cMatrix();
 
-	inline QMatrix4x4 viewMatrix() const { return mViewMatrix; }
-	inline QMatrix4x4 projectionMatrix() const { return mProjectionMatrix; }
+    inline QMatrix4x4 viewMatrix() const { return mViewMatrix; }
+    inline QMatrix4x4 projectionMatrix() const { return mProjectionMatrix; }
 
     void update();
-	void setPosition(const QVector3D& position);
+    void followPlayer(const QVector3D &playerPosition, const QVector3D &offset);
+    void setPosition(const QVector3D& position);
     void pitch(float degrees);
     void yaw(float degrees);
+    QVector3D cameraOffset{0.0f, 2.0f, 10.0f};
 
     inline void setViewMatrix(const QMatrix4x4 &newViewMatrix){ mViewMatrix = newViewMatrix; }
     inline void setProjectionMatrix(const QMatrix4x4 &newProjectionMatrix){ mProjectionMatrix = newProjectionMatrix; }

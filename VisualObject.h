@@ -9,7 +9,7 @@
 class VisualObject
 {
 public:
-    VisualObject();
+    virtual ~VisualObject();
 
     void move(float x, float y = 0.0f, float z = 0.0f);
     void scale(float s);
@@ -33,7 +33,6 @@ public:
     inline QMatrix4x4 getMatrix() const {return mMatrix;}
 	inline std::vector<Vertex> getVertices() const { return mVertices; }
 	inline std::vector<uint32_t> getIndices() const { return mIndices; }
-
 
 protected:
     std::vector<Vertex> mVertices;

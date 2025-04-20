@@ -4,8 +4,8 @@
 
 HeightMap::HeightMap(const std::string& filename)
 {
-    int width = 256;
-    int height = 256;
+    width = 256;
+    height = 256;
     int channels = 4;
 
     unsigned char* textureData = stbi_load(filename.c_str(), &width, &height, &channels, 4);
@@ -124,4 +124,71 @@ void HeightMap::makeTerrain(unsigned char* textureData, int widthIn, int heightI
 	//Calculating the normals for the mesh
     //Function not made yet:
     //calculateHeighMapNormals();
+
+}
+float HeightMap::barycentricHeight(const QVector2D& p, const QVector3D& a, const QVector3D& b, const QVector3D& c)
+{
+    // Get the 2D coordinates (x, z) of each triangle vertex
+    QVector2D a2D(a.x(), a.z());
+    QVector2D b2D(b.x(), b.z());
+    QVector2D c2D(c.x(), c.z());
+
+    // Vectors from A to B and A to C
+    QVector2D v0 = b2D - a2D;
+    QVector2D v1 = c2D - a2D;
+    QVector2D v2 = p   - a2D;
+
+    // Dot products for barycentric calculation
+    float d00 = QVector2D::dotProduct(v0, v0);
+    float d01 = QVector2D::dotProduct(v0, v1);
+    float d11 = QVector2D::dotProduct(v1, v1);
+    float d20 = QVector2D::dotProduct(v2, v0);
+    float d21 = QVector2D::dotProduct(v2, v1);
+
+    // Calculate denominator
+    float denom = d00 * d11 - d01 * d01;
+    if (denom == 0.0f)
+        return a.y(); // Degenerate triangle — just return a.y as fallback
+
+    // Barycentric coordinates
+    float v = (d11 * d20 - d01 * d21) / denom;
+    float w = (d00 * d21 - d01 * d20) / denom;
+    float u = 1.0f - v - w;
+
+    // Interpolate height (y) using barycentric weights
+    return u * a.y() + v * b.y() + w * c.y();
+}
+float HeightMap::getHeightAtPosition(float worldX, float worldZ)
+{
+    float horisontalSpacing = 0.5f;  // match your terrain generation
+    int gridX = static_cast<int>(worldX / horisontalSpacing);
+    int gridZ = static_cast<int>(-worldZ / horisontalSpacing);  // assuming Z goes negative in your loop
+
+    if (gridX < 0 || gridZ < 0 || gridX >= width - 1 || gridZ >= height - 1)
+        return 0.0f;  // out of bounds
+
+    // Find which triangle of the quad we are in
+    float xCoord = fmod(worldX, horisontalSpacing) / horisontalSpacing;
+    float zCoord = fmod(-worldZ, horisontalSpacing) / horisontalSpacing;
+
+    // Get triangle vertices from mVertices
+    QVector3D a, b, c;
+    int topLeftIndex = gridX + gridZ * width;
+    if (xCoord + zCoord <= 1.0f)
+    {
+        // Top-left triangle
+        a = QVector3D(mVertices[topLeftIndex].x, mVertices[topLeftIndex].y, mVertices[topLeftIndex].z);
+        b = QVector3D(mVertices[topLeftIndex + 1].x, mVertices[topLeftIndex + 1].y, mVertices[topLeftIndex + 1].z);
+        c = QVector3D(mVertices[topLeftIndex + width].x, mVertices[topLeftIndex + width].y, mVertices[topLeftIndex + width].z);
+    }
+    else
+    {
+        // Bottom-right triangle
+        a = QVector3D(mVertices[topLeftIndex + 1 + width].x, mVertices[topLeftIndex + 1 + width].y, mVertices[topLeftIndex + 1 + width].z);
+        b = QVector3D(mVertices[topLeftIndex + width].x, mVertices[topLeftIndex + width].y, mVertices[topLeftIndex + width].z);
+        c = QVector3D(mVertices[topLeftIndex + 1].x, mVertices[topLeftIndex + 1].y, mVertices[topLeftIndex + 1].z);
+    }
+
+    QVector2D p(worldX, worldZ);
+    return barycentricHeight(QVector2D(p.x(), p.y()), a, b, c);
 }

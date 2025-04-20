@@ -5,6 +5,7 @@
 #include <vector>
 #include <unordered_map>
 #include "Camera.h"
+#include "CollisionHandler.h"
 #include "VisualObject.h"
 #include "Utilities.h"
 
@@ -77,6 +78,8 @@ protected:
     VkPipeline mPipeline2{ VK_NULL_HANDLE };
 
     VkQueue mGraphicsQueue{ VK_NULL_HANDLE };
+
+    CollisionHandler mCollisionHandler;
 
 private:
     friend class VulkanWindow;

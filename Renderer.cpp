@@ -12,7 +12,7 @@
 
 /*** Renderer class ***/
 Renderer::Renderer(QVulkanWindow *w, bool msaa)
-	: mWindow(w)
+    : mWindow(w), mCollisionHandler(*this)
 {
     if (msaa) {
         const QList<int> counts = w->supportedSampleCounts();
@@ -37,7 +37,7 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     mObjects.at(2)->setName("axis");
     mObjects.at(3)->setName("player");
     mObjects.at(4)->setName("heightmap");
-    mObjects.at(4)->move(0, -100, 0);
+    //mObjects.at(4)->move(0, -100, 0);
     // **************************************
     // Legger inn objekter i map
     // **************************************
@@ -48,6 +48,7 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
 	//Inital position of the camera
     //mCamera.setPosition(QVector3D(-0.5, -0.5, -8));
     mObjects.at(3)->move(-1, 0, 0);
+
 
     //Need access to our VulkanWindow so making a convenience pointer
     mVulkanWindow = dynamic_cast<VulkanWindow*>(w);
@@ -328,6 +329,16 @@ void Renderer::startNextFrame()
     float deltaTime = std::chrono::duration<float>(now - lastTime).count();
     lastTime = now;
     mVulkanWindow->handleInput(deltaTime);
+    QVector3D posXZ = QVector3D(mObjects.at(3)->Position.x(), 0.0f, mObjects.at(3)->Position.z());
+    for (auto obj : mObjects) {
+        HeightMap* heightMapObj = dynamic_cast<HeightMap*>(obj);
+        if (heightMapObj) {
+            float newY = heightMapObj->getHeightAtPosition(posXZ.x(), posXZ.z());
+            float deltaY = newY - mObjects.at(3)->Position.y();
+            mObjects.at(3)->move(0, deltaY, 0);
+        }
+    }
+    mCollisionHandler.checkCollision();
     mCamera.followPlayer(mObjects.at(3)->Position, mCamera.cameraOffset);
 
 

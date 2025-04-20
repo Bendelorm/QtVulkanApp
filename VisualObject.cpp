@@ -1,6 +1,6 @@
 #include "VisualObject.h"
 
-VisualObject::VisualObject()
+VisualObject::~VisualObject()
 {
     mMatrix.setToIdentity();
 }

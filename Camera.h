@@ -28,7 +28,7 @@ public:
     void setPosition(const QVector3D& position);
     void pitch(float degrees);
     void yaw(float degrees);
-    QVector3D cameraOffset{0.0f, 2.0f, 10.0f};
+    QVector3D cameraOffset{0.0f, 5.0f, 10.0f};
 
     inline void setViewMatrix(const QMatrix4x4 &newViewMatrix){ mViewMatrix = newViewMatrix; }
     inline void setProjectionMatrix(const QMatrix4x4 &newProjectionMatrix){ mProjectionMatrix = newProjectionMatrix; }

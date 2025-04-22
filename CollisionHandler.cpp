@@ -15,7 +15,7 @@ void CollisionHandler::handleCollision(VisualObject &a, VisualObject &b)
     if (b.getName() == "quad")
     {
         qDebug("collected");
-        b.move(0, 100, 0);
+        b.move(0, -100, 0);
     }
 }
 void CollisionHandler::checkCollision()

@@ -42,8 +42,21 @@ void VulkanWindow::keyPressEvent(QKeyEvent *event)
     }
     if(event->key() == Qt::Key_F)
     {
-        qDebug("Scaling object");
-        dynamic_cast<Renderer*>(mRenderer)->mObjects.at(mIndex)->scale(0.9f);
+        if (cameraOption == 0)
+        {
+            mCamera->cameraOffset = {0.0f, 3.0f, 10.0f};
+            cameraOption = 1;
+        }
+        else if (cameraOption == 1)
+        {
+            mCamera->cameraOffset = {0.0f, 10.0f, 30.0f};
+            cameraOption = 2;
+        }
+        else if (cameraOption == 2)
+        {
+            mCamera->cameraOffset = {0.0f, 20.0f, 10.0f};
+            cameraOption = 0;
+        }
     }
     if (event->key() == Qt::Key_Escape)
     {
@@ -200,44 +213,46 @@ void VulkanWindow::mouseMoveEvent(QMouseEvent *event)
 {
     if (mInput.RMB)
     {
-        //Using mMouseXYlast as deltaXY so we don't need extra variables
         mMouseXlast = event->pos().x() - mMouseXlast;
         mMouseYlast = event->pos().y() - mMouseYlast;
 
+        float yawAmount = -mCameraRotateSpeed * mMouseXlast;
+        float pitchAmount = -mCameraRotateSpeed * mMouseYlast;
+
         if (mMouseXlast != 0)
-            dynamic_cast<Renderer*>(mRenderer)->mCamera.yaw(-mCameraRotateSpeed * mMouseXlast);
+        {
+            dynamic_cast<Renderer*>(mRenderer)->mCamera.yaw(yawAmount);
+
+            // Also rotate player
+            auto* player = dynamic_cast<Renderer*>(mRenderer)->mObjects.at(3);
+            player->rotate(yawAmount, 0.f, 1.f, 0.f);
+        }
         if (mMouseYlast != 0)
-            dynamic_cast<Renderer*>(mRenderer)->mCamera.pitch(-mCameraRotateSpeed * mMouseYlast);
+        {
+            dynamic_cast<Renderer*>(mRenderer)->mCamera.pitch(pitchAmount);
+        }
     }
+
     mMouseXlast = event->pos().x();
     mMouseYlast = event->pos().y();
 }
 
 void VulkanWindow::handleInput(float deltaTime)
 {
-    //Camera
     if (bCanMove)
     {
-        mCamera->setSpeed(0.f);  //cancel last frame movement
+        auto* player = dynamic_cast<Renderer*>(mRenderer)->mObjects.at(3);
+        QVector3D forward = player->getForward();  // Get the updated forward vector based on yaw
+        QVector3D right = QVector3D::crossProduct(forward, QVector3D(0.f, 1.f, 0.f));  // Right vector
+
+        // Move the player based on the updated direction
         if (mInput.W)
-        {
-            //mCamera->setSpeed(mCameraSpeed);
-            dynamic_cast<Renderer*>(mRenderer)->mObjects.at(3)->move(0.0f, 0.0f, -moveSpeed * deltaTime);
-        }
+            player->move(-forward.x() * moveSpeed * deltaTime, 0.f, -forward.z() * moveSpeed * deltaTime);
         if (mInput.S)
-        {
-            //mCamera->setSpeed(-mCameraSpeed);
-            dynamic_cast<Renderer*>(mRenderer)->mObjects.at(3)->move(0.0f, 0.0f, moveSpeed * deltaTime);
-        }
+            player->move(forward.x() * moveSpeed * deltaTime, 0.f, forward.z() * moveSpeed * deltaTime);
         if (mInput.D)
-        {
-            //mCamera->moveRight(-mCameraSpeed);
-            dynamic_cast<Renderer*>(mRenderer)->mObjects.at(3)->move(moveSpeed * deltaTime, 0.0f, 0.0f);
-        }
+            player->move(-right.x() * moveSpeed * deltaTime, 0.f, -right.z() * moveSpeed * deltaTime);
         if (mInput.A)
-        {
-            //mCamera->moveRight(mCameraSpeed);
-            dynamic_cast<Renderer*>(mRenderer)->mObjects.at(3)->move(-moveSpeed * deltaTime, 0.0f, 0.0f);
-        }
+            player->move(right.x() * moveSpeed * deltaTime, 0.f, right.z() * moveSpeed * deltaTime);
     }
 }

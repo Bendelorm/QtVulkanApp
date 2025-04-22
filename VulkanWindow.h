@@ -49,7 +49,8 @@ private:
     float mCameraRotateSpeed{ -0.1f };
     int mMouseXlast{0}; //for mouse rotate input
     int mMouseYlast{0};
-    float moveSpeed = 20.0f; // meters per second
+    float moveSpeed = 10.0f; // meters per second
+    int cameraOption = 0;
 
     class Camera* mCamera{ nullptr };
 };

@@ -93,7 +93,7 @@ void HeightMap::makeTerrain(unsigned char* textureData, int widthIn, int heightI
                 b = 0.8f + t * 0.2f;
             }
 			//                                          x - value                      y-value               z-value
-            mVertices.emplace_back(Vertex{vertexXStart + (w * horisontalSpacing), heightFromBitmap, vertexZStart - (d * horisontalSpacing),
+            mVertices.emplace_back(Vertex{vertexXStart + (w * horisontalSpacing), heightFromBitmap * heightSpacing, vertexZStart - (d * horisontalSpacing),
                 //  dummy normal=0,1,0                  Texture coordinates
                 normal[0],normal[1],normal[2],           w / (width - 1.f), d / (depth - 1.f)});
         }

@@ -7,10 +7,12 @@ VisualObject::~VisualObject()
 
 void VisualObject::move(float x, float y, float z)
 {
-    mMatrix.translate(x, y, z);
-    Position.setX(mMatrix(0, 3));
-    Position.setY(mMatrix(1, 3));
-    Position.setZ(mMatrix(2, 3));
+
+    Position += QVector3D(x, y, z);
+
+    // After moving, update the matrix with the new position and yaw
+    updateMatrix();
+
     qDebug() << "Stored Position: (" << Position.x() << ", " << Position.y() << ", " << Position.z() << ")";
 }
 
@@ -21,5 +23,27 @@ void VisualObject::scale(float s)
 
 void VisualObject::rotate(float t, float x, float y, float z)
 {
-    mMatrix.rotate(t, x, y, z);
+    if (x == 0.f && y == 1.f && z == 0.f)
+    {
+        mYaw += t; // Update yaw when rotating around Y-axis
+    }
+    updateMatrix();
+}
+QVector3D VisualObject::getForward() const
+{
+    float radians = qDegreesToRadians(mYaw);
+    return QVector3D(qSin(radians), 0.f, qCos(radians)).normalized();
+}
+
+
+float VisualObject::getYaw() const
+{
+    return mYaw;
+}
+void VisualObject::updateMatrix()
+{
+    QMatrix4x4 mat;
+    mat.translate(Position);
+    mat.rotate(mYaw, 0.f, 1.f, 0.f); // yaw only
+    mMatrix = mat;
 }

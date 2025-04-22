@@ -47,7 +47,8 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
 
 	//Inital position of the camera
     //mCamera.setPosition(QVector3D(-0.5, -0.5, -8));
-    mObjects.at(3)->move(-1, 0, 0);
+    mObjects.at(3)->move(0, 0, 0);
+    mObjects.at(1)->move(60, 5, -50);
 
 
     //Need access to our VulkanWindow so making a convenience pointer
@@ -339,7 +340,7 @@ void Renderer::startNextFrame()
         }
     }
     mCollisionHandler.checkCollision();
-    mCamera.followPlayer(mObjects.at(3)->Position, mCamera.cameraOffset);
+    mCamera.followPlayer(mObjects.at(3)->Position, mObjects.at(3)->getYaw(), mCamera.cameraOffset);
 
 
     VkCommandBuffer commandBuffer = mWindow->currentCommandBuffer();

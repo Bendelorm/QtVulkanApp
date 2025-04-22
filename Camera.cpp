@@ -63,10 +63,16 @@ void Camera::setSpeed(float speed)
     mSpeed = speed;
 }
 
-void Camera::followPlayer(const QVector3D &playerPosition, const QVector3D &offset)
+void Camera::followPlayer(const QVector3D &playerPosition, const float &playerYaw, const QVector3D &offset)
 {
-    mEye = playerPosition + offset;
+    QMatrix4x4 rotation;
+    rotation.rotate(playerYaw, 0.f, 1.f, 0.f);  // Rotate offset around Y
+
+    QVector3D rotatedOffset = (rotation * QVector4D(offset, 1.0f)).toVector3D();
+
+    mEye = playerPosition + rotatedOffset;
     mAt = playerPosition;
+
     mViewMatrix.setToIdentity();
     mViewMatrix.lookAt(mEye, mAt, mUp);
 }

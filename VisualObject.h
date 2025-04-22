@@ -15,7 +15,12 @@ public:
     void scale(float s);
     void rotate(float t, float x, float y, float z);
     float Radius {0.5};
+    float mYaw = 0.0f;
     QVector3D Position;
+    QVector3D getForward() const;
+    float getYaw() const;
+    void updateMatrix();
+
 
 	//Setters and Getters
     inline std::vector<Vertex> getVertices() { return mVertices; }

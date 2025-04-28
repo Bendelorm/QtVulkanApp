@@ -30,7 +30,7 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     mObjects.push_back((new TriangleSurface()));
     mObjects.push_back((new WorldAxis()));
     mObjects.push_back((new ObjMesh("player.obj")));
-    mObjects.push_back(new HeightMap("../../Assets/paint.jpg"));
+    mObjects.push_back(new HeightMap("../../Assets/flyfotoheightmap.png"));
     // Dag 030225
     mObjects.at(0)->setName("tri");
     mObjects.at(1)->setName("quad");
@@ -296,7 +296,8 @@ void Renderer::initResources()
     // Create the texture sampler
     createTextureSampler();
 
-    mTextureHandle = createTexture("../../Assets/hundA.bmp"); //Heightmap.jpg HundA.bmp
+    mDefaultTextureHandle = createTexture("../../Assets/hundA.bmp"); //Heightmap.jpg HundA.bmp
+    mObjects.at(4)->mTextureHandle = createTexture("../../Assets/flyfototexture.png");
 
 
 
@@ -368,8 +369,14 @@ void Renderer::startNextFrame()
         setModelMatrix((*it)->getMatrix()); //mvp);
 
         // Bind the texture descriptor set
-		setTexture(mTextureHandle, commandBuffer);
-        
+        if ((*it)->mTextureHandle.mTextureDescriptorSet != VK_NULL_HANDLE)
+        {
+            setTexture((*it)->mTextureHandle, commandBuffer);
+        }
+        else
+        {
+            setTexture(mDefaultTextureHandle, commandBuffer);
+        }
         mDeviceFunctions->vkCmdBindVertexBuffers(commandBuffer, 0, 1, &(*it)->getVBuffer(), &vbOffset);
 		//Check if we have an index buffer - if so, use Indexed draw
         if ((*it)->getIndices().size() > 0)
@@ -901,7 +908,11 @@ void Renderer::releaseResources()
     }
 
     // Destroy textures
-    destroyTexture(mTextureHandle);
+    destroyTexture(mDefaultTextureHandle);
+    for (int i = 0; i < mObjects.size(); i++)
+    {
+        destroyTexture(mObjects.at(i)->mTextureHandle);
+    }
 
 	if (mTextureSampler) {
 		mDeviceFunctions->vkDestroySampler(dev, mTextureSampler, nullptr);

@@ -20,6 +20,7 @@ public:
     QVector3D getForward() const;
     float getYaw() const;
     void updateMatrix();
+    TextureHandle mTextureHandle;
 
 
 	//Setters and Getters

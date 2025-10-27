@@ -3,6 +3,8 @@
 #include <QDebug>
 TriangleSurface::TriangleSurface() : VisualObject()
 {
+    drawType = 1; // 0 = fill, 1 = line
+
     Vertex v1{ 0.0f,  0.0f,  0.0f,   1.0f, 0.0f, 0.0f,  0.0f, 0.0f};  //  bottom-left corner
 	Vertex v2{ 1.0f,  0.0f,  0.0f,   0.0f, 1.0f, 0.0f,  1.0f, 0.0f }; //  bottom-right corner
 	Vertex v3{ 0.0f,  1.0f,  0.0f,   0.0f, 0.0f, 1.0f,  0.0f, 1.0f }; //  top-left corner
@@ -29,6 +31,7 @@ TriangleSurface::TriangleSurface() : VisualObject()
 
 TriangleSurface::TriangleSurface(const std::string &filename)
 {
+    drawType = 1; // 0 = fill, 1 = line
     std::ifstream inn(filename);
     if (!inn.is_open())
         return;
@@ -42,5 +45,6 @@ TriangleSurface::TriangleSurface(const std::string &filename)
         mVertices.push_back(v);
         //qDebug() << v.x << v.y << v.z;
     }
+    qDebug() << "Loaded vertices:" << mVertices.size();
     inn.close();
 }

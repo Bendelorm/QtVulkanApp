@@ -157,6 +157,18 @@ bool ObjMesh::readObjFile(const std::string& filename)
             continue;
         }
     }
+    if (mVertices.empty() && !tempVertecies.empty())
+    {
+        qDebug() << "OBJ has only vertices — treating as point cloud.";
+
+        for (const auto& v : tempVertecies)
+        {
+            Vertex vert(v, QVector3D(0, 0, 1), QVector2D(0, 0)); // fake normal + UV
+            mVertices.push_back(vert);
+            mIndices.push_back(temp_index++);
+        }
+        drawType = 1;
+    }
     // beeing a nice boy and closing the file after use
     fileIn.close();
     

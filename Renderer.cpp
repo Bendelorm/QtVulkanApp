@@ -2,11 +2,8 @@
 #include <QVulkanFunctions>
 #include <QFile>
 #include <fstream>
+#include "Terrain.h"
 #include "VulkanWindow.h"
-#include "WorldAxis.h"
-#include "Triangle.h"
-#include "TriangleSurface.h"
-#include "HeightMap.h"
 #include "stb_image.h"
 #include "ObjMesh.h"
 
@@ -31,9 +28,12 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
     //mObjects.push_back((new WorldAxis()));
     //mObjects.push_back(new HeightMap());
     //mObjects.push_back(new ObjMesh(assetPath + "suzanne.obj"));
-    mObjects.push_back(new ObjMesh(assetPath + "pointcloud3.obj"));
+    mObjects.push_back(new ObjMesh(assetPath + "sphere.obj"));
+    mObjects.push_back(new Terrain());
     // Dag 030225
     //mObjects.at(0)->setName("tri");
+    mObjects.at(0)->setName("sphere");
+    mObjects.at(1)->setName("terrain");
     //mObjects.at(1)->setName("quad");
     //mObjects.at(1)->setName("axis");
     //mObjects.at(2)->setName("terrain");
@@ -48,11 +48,12 @@ Renderer::Renderer(QVulkanWindow *w, bool msaa)
         mMap.insert(std::pair<std::string, VisualObject*>{(*it)->getName(),*it});
 
 	//Inital position of the camera
-    mCamera.setPosition(QVector3D(-1.5, -0.5, -7));
+    mCamera.setPosition(QVector3D(-1.5, -0.5, -10));
     mCamera.rotate(-45, 1, 0, 0);
-    mObjects.at(0)->scale(0.01);
-    mObjects.at(0)->rotate(-90, 1, 0, 0);
-    //mObjects.at(5)->setPosition(-503847.37f, -6589554.82f, -139.81f);
+    //mObjects.at(0)->scale(0.01);|
+    //mObjects.at(0)->rotate(-90, 1, 0, 0);
+    //mObjects.at(0)->setPosition(0, 0, 0);
+    //mObjects.at(1)->move(1, -1, 0.5);
     //mObjects.at(4)->setPosition(0, 0, 0);
     //Need access to our VulkanWindow so making a convenience pointer
     mVulkanWindow = dynamic_cast<VulkanWindow*>(w);
@@ -312,6 +313,12 @@ void Renderer::startNextFrame()
 {
     //Handeling input from keyboard and mouse is done in VulkanWindow
     //Has to be done each frame to get smooth movement
+
+    static_cast<Terrain*>(mMap["terrain"])->simulateBall(0.01); // dt = 16 ms
+    QVector3D ballPos = static_cast<Terrain*>(mMap["terrain"])->getBallPosition();
+    mMap["sphere"]->setPosition(ballPos.x(), ballPos.y(), ballPos.z());
+
+
     mVulkanWindow->handleInput();
     mCamera.update();               //input can have moved the camera
 

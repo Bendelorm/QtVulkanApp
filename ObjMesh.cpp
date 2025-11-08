@@ -160,10 +160,17 @@ bool ObjMesh::readObjFile(const std::string& filename)
     if (mVertices.empty() && !tempVertecies.empty())
     {
         qDebug() << "OBJ has only vertices — treating as point cloud.";
-
+        float heighestpoint = 0;
         for (const auto& v : tempVertecies)
         {
-            Vertex vert(v, QVector3D(0, 0, 1), QVector2D(0, 0)); // fake normal + UV
+            if (v.z() > heighestpoint)
+            {
+                heighestpoint = v.z();
+            }
+        }
+        for (const auto& v : tempVertecies)
+        {
+            Vertex vert(v, QVector3D(v.z()/heighestpoint, v.z()/heighestpoint, 0), QVector2D(0, 0)); // fake normal + UV
             mVertices.push_back(vert);
             mIndices.push_back(temp_index++);
         }
